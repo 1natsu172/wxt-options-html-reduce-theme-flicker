@@ -6,6 +6,12 @@ export default defineConfig({
   extensionApi: "chrome",
   manifest: {
     permissions: ["storage"],
+    web_accessible_resources: [
+      {
+        matches: ["<all_urls>"],
+        resources: ["/theme.js"],
+      },
+    ],
   },
   vite: (_env) => {
     return {
