@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="~/assets/tailwind.css" rel="stylesheet">
+  <script type="module" src="./theme.ts"></script>
+
+  <title>Options Title</title>
+
+  <!-- Customize the manifest options -->
+  <meta name="manifest.open_in_tab" content="true" />
+
+  <!-- <meta name="manifest.chrome_style" content="true|false" /> -->
+  <!-- <meta name="manifest.browser_style" content="true|false" /> -->
+
+  <!-- Set include/exclude if the page should be removed from some builds -->
+  <!-- <meta name="manifest.include" content="['chrome', ...]" /> -->
+  <!-- <meta name="manifest.exclude" content="['chrome', ...]" /> -->
+</head>
+
+<body class="p-4 w-[250px]">
+  <h1 class=" text-4xl font-bold underline">
+    Hello world!
+  </h1>
+  <p>
+    This page is styled with
+    <a class="underline text-blue-500" href="https://tailwindcss.com/" target="_blank">TailwindCSS</a>.
+  </p>
+  <div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-8 ring shadow-xl ring-gray-900/5">
+    <button id="theme-toggle" class="px-4 py-2 bg-yellow-300 text-gray rounded-lg">
+      Toggle theme
+    </button>
+    <button id="theme-prefers-color-scheme" class="px-4 py-2 bg-blue-500 text-white rounded-lg">
+      prefers-color-scheme
+    </button>
+    <h3 class="text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight ">Writes upside-down</h3>
+    <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm ">
+      The Zero Gravity Pen can be used to write in any orientation, including upside-down. It even works in outer space.
+    </p>
+  </div>
+</body>
+
+</html>
