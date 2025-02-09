@@ -6,19 +6,21 @@ export default defineUnlistedScript({
       dark = "dark",
       light = "light",
     }
+    const STORE_KEY = 'theme' as const;
 
-    const themeStore = storage.defineItem<THEME>("local:theme");
+    // const themeStore = storage.defineItem<THEME>("local:theme");
+    const themeStore = localStorage;
 
-    async function toggleTheme() {
+    function toggleTheme() {
       const isDark = htmlElement.classList.toggle(THEME.dark);
-      await themeStore.setValue(isDark ? THEME.dark : THEME.light);
+      themeStore.setItem(STORE_KEY, isDark ? THEME.dark : THEME.light);
 
       console.log("isDark", isDark);
-      console.log("now theme", await themeStore.getValue());
+      console.log("now theme", themeStore.getItem(STORE_KEY));
     }
 
-    async function preferTheme() {
-      await themeStore.setValue(null);
+    function preferTheme() {
+      themeStore.removeItem(STORE_KEY);
       htmlElement.classList.toggle(
         THEME.dark,
         window.matchMedia(`(prefers-color-scheme: ${THEME.dark})`).matches
@@ -33,24 +35,23 @@ export default defineUnlistedScript({
         "theme-prefers-color-scheme"
       );
 
-      themeToggleBtn?.addEventListener("click", async () => {
-        await toggleTheme();
+      themeToggleBtn?.addEventListener("click", () => {
+        toggleTheme();
       });
-      themePreferColorSchemeBtn?.addEventListener("click", async () => {
-        await preferTheme();
+      themePreferColorSchemeBtn?.addEventListener("click", () => {
+        preferTheme();
       });
     });
 
     // ASAP resolve the theme
     const htmlElement = document.documentElement;
-    const storedTheme = await themeStore.getValue();
+    const storedTheme = themeStore.getItem(STORE_KEY);
     const isDark = htmlElement.classList.toggle(
       THEME.dark,
       storedTheme === THEME.dark ||
         (storedTheme === null &&
           window.matchMedia(`(prefers-color-scheme: ${THEME.dark})`).matches)
     );
-    htmlElement.classList.remove("opacity-0");
     console.log("onload theme", { isDark, storedTheme });
   },
 });
