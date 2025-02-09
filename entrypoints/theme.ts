@@ -6,25 +6,43 @@ export default defineUnlistedScript({
       dark = "dark",
       light = "light",
     }
-    const STORE_KEY = 'theme' as const;
+    const LOCAL_KEY = "theme" as const;
+    const SYNCED_KEY = "sync:theme" as const;
+    const themeStore = storage.defineItem<THEME>(SYNCED_KEY);
 
-    // const themeStore = storage.defineItem<THEME>("local:theme");
-    const themeStore = localStorage;
+    // Sync storage with local storage
+    themeStore.watch((value) => {
+      if (typeof value === "string") {
+        localStorage.setItem(LOCAL_KEY, value);
+      } else {
+        localStorage.removeItem(LOCAL_KEY);
+      }
+    });
 
-    function toggleTheme() {
+    async function toggleTheme() {
       const isDark = htmlElement.classList.toggle(THEME.dark);
-      themeStore.setItem(STORE_KEY, isDark ? THEME.dark : THEME.light);
+      const storeValue = isDark ? THEME.dark : THEME.light;
+      await themeStore.setValue(storeValue);
 
       console.log("isDark", isDark);
-      console.log("now theme", themeStore.getItem(STORE_KEY));
+      console.log("now storage", {
+        sync: await themeStore.getValue(),
+        local: localStorage.getItem(LOCAL_KEY),
+      });
     }
 
-    function preferTheme() {
-      themeStore.removeItem(STORE_KEY);
-      htmlElement.classList.toggle(
+    async function preferTheme() {
+      await themeStore.removeValue();
+      const isDark = htmlElement.classList.toggle(
         THEME.dark,
         window.matchMedia(`(prefers-color-scheme: ${THEME.dark})`).matches
       );
+
+      console.log("isDark", isDark);
+      console.log("now storage", {
+        sync: await themeStore.getValue(),
+        local: localStorage.getItem(LOCAL_KEY),
+      });
     }
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -35,17 +53,17 @@ export default defineUnlistedScript({
         "theme-prefers-color-scheme"
       );
 
-      themeToggleBtn?.addEventListener("click", () => {
-        toggleTheme();
+      themeToggleBtn?.addEventListener("click", async () => {
+        await toggleTheme();
       });
-      themePreferColorSchemeBtn?.addEventListener("click", () => {
-        preferTheme();
+      themePreferColorSchemeBtn?.addEventListener("click", async () => {
+        await preferTheme();
       });
     });
 
     // ASAP resolve the theme
     const htmlElement = document.documentElement;
-    const storedTheme = themeStore.getItem(STORE_KEY);
+    const storedTheme = localStorage.getItem(LOCAL_KEY);
     const isDark = htmlElement.classList.toggle(
       THEME.dark,
       storedTheme === THEME.dark ||
